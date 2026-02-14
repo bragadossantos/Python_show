@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Tarefa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        button,
+        a.btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            button,
+            a.btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✏️ Editar Tarefa</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="titulo">Título *</label>
+                <input type="text" id="titulo" name="titulo" required value="{{ tarefa.titulo }}" placeholder="Digite o título da tarefa">
+            </div>
+
+            <div class="form-group">
+                <label for="descricao">Descrição</label>
+                <textarea id="descricao" name="descricao" placeholder="Descreva a tarefa (opcional)">{{ tarefa.descricao }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="categoria">Categoria</label>
+                <select id="categoria" name="categoria">
+                    <option value="">-- Nenhuma categoria --</option>
+                    {% for cat in categorias %}
+                        <option value="{{ cat.id }}" {% if tarefa.categoria.id == cat.id %}selected{% endif %}>{{ cat.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="prioridade">Prioridade</label>
+                <select id="prioridade" name="prioridade">
+                    <option value="Baixa" {% if tarefa.prioridade == 'Baixa' %}selected{% endif %}>🟢 Baixa</option>
+                    <option value="Média" {% if tarefa.prioridade == 'Média' %}selected{% endif %}>🟡 Média</option>
+                    <option value="Alta" {% if tarefa.prioridade == 'Alta' %}selected{% endif %}>🔴 Alta</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="data_vencimento">Data de Vencimento</label>
+                <input type="date" id="data_vencimento" name="data_vencimento" value="{% if tarefa.data_vencimento %}{{ tarefa.data_vencimento|date:'Y-m-d' }}{% endif %}">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">✓ Guardar Alterações</button>
+                <a href="{% url 'lista_tarefas' %}" class="btn btn-secondary">← Voltar</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
